@@ -31,7 +31,13 @@ Object.defineProperty(AsyncCache.prototype, 'itemCount', {
   configurable: true
 })
 
-AsyncCache.prototype.get = function (key, cb) {
+AsyncCache.prototype.get = function (key, options, cb) {
+  
+  if (typeof(options) === 'function') {
+    cb = options;
+    options = null;
+  }
+
   var stale = this._stales[key]
   if (this._allowStale && stale !== undefined) {
     return process.nextTick(function () {
@@ -60,7 +66,7 @@ AsyncCache.prototype.get = function (key, cb) {
     this._loading[key] = [ cb ]
   }
 
-  this._load(key, function (er, res, maxAge) {
+  this._load(key, options, function (er, res, maxAge) {
     if (!er) {
       this._cache.set(key, res, maxAge)
     }

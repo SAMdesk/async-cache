@@ -28,7 +28,7 @@ test('options check', function (t) {
 test('basic', function (t) {
   var ac = new AC({
     max: 1,
-    load: function (key, cb) {
+    load: function (key, options, cb) {
       fs.stat(key, cb)
     }
   })
@@ -99,7 +99,7 @@ test('allow stale', function (t) {
   var v = 0
   var ac = new AC({
     max: 1,
-    load: function (key, cb) {
+    load: function (key, options, cb) {
       setTimeout(function () {
         cb(null, v++)
       }, 100)
@@ -131,7 +131,7 @@ test('return stale while updating', function (t) {
     max: 1000,
     stale: true,
     maxAge: maxAge,
-    load: function (key, cb) {
+    load: function (key, options, cb) {
       loadingTimes++
       setTimeout(function () {
         cb(null, { created: Date.now(), version: loadingTimes })
@@ -172,7 +172,7 @@ test('return stale while updating', function (t) {
 test('keys', function (t) {
   var ac = new AC({
     max: 10,
-    load: function (key, cb) {
+    load: function (key, options, cb) {
       cb({ msg: 'item not in cache' })
     },
     maxAge: 10,
@@ -195,7 +195,7 @@ test('keys', function (t) {
 test('per item maxAge', function (t) {
   var counter = 0
   var ac = new AC({
-    load: function (n, cb) {
+    load: function (n, options, cb) {
       ++counter
       setTimeout(function () {
         // max age set to 500
